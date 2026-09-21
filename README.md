@@ -1,3 +1,4 @@
+
 # AMZ — Bug Bounty Recon Automation Platform
 
 AMZ is a web-based **passive** recon automation platform for bug bounty hunters.
@@ -220,3 +221,4 @@ and syntax-checked):
 
 Nothing in the delivered app uses fake/demo data — every table is populated from
 real scan results in Postgres.
+
