@@ -1,0 +1,46 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import { api, getToken, setToken } from "./api";
+
+const AuthCtx = createContext(null);
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      if (getToken()) {
+        try {
+          setUser(await api.me());
+        } catch {
+          setToken(null);
+        }
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  const login = async (email, password) => {
+    const { access_token } = await api.login(email, password);
+    setToken(access_token);
+    setUser(await api.me());
+  };
+
+  const register = async (email, password) => {
+    await api.register(email, password);
+    await login(email, password);
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+  };
+
+  return (
+    <AuthCtx.Provider value={{ user, loading, login, register, logout }}>
+      {children}
+    </AuthCtx.Provider>
+  );
+}
+
+export const useAuth = () => useContext(AuthCtx);
