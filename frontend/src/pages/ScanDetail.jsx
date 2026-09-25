@@ -136,7 +136,7 @@ export default function ScanDetail() {
                   >
                     <td className="px-5 py-3.5 font-medium">
                       {h.is_live && h.scheme ? (
-                        
+                         <a 
                           href={buildUrl(h)}
                           target="_blank"
                           rel="noreferrer"
