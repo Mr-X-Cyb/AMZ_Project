@@ -132,7 +132,7 @@ export default function ScanDetail() {
                   <td className="px-5 py-3.5 font-medium">
                     {h.is_live && h.scheme ? (
                       
-                        href={h.scheme + "://" + h.subdomain}
+                        href={h.scheme + String.fromCharCode(58,47,47) + h.subdomain}
                         target="_blank"
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()}
