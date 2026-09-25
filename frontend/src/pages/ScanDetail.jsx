@@ -44,7 +44,11 @@ export default function ScanDetail() {
   };
 
   const hosts = scan.hosts || [];
-  const live = hosts.filter((h) => h.is_live);
+  const live = hosts.filter(function (h) { return h.is_live; });
+
+  function buildUrl(h) {
+    return h.scheme + String.fromCharCode(58, 47, 47) + h.subdomain;
+  }
 
   return (
     <div className="space-y-6">
@@ -122,87 +126,89 @@ export default function ScanDetail() {
                 </td>
               </tr>
             )}
-            {hosts.map((h) => (
-              <>
-                <tr
-                  key={h.id}
-                  onClick={() => setOpen(open === h.id ? null : h.id)}
-                  className="border-t border-amz-border hover:bg-amz-panel2/60 cursor-pointer transition-colors"
-                >
-                  <td className="px-5 py-3.5 font-medium">
-                    {h.is_live && h.scheme ? (
-                      
-                        href={h.scheme + String.fromCharCode(58,47,47) + h.subdomain}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-amz-accent2 hover:underline"
-                      >
-                        {h.subdomain}
-                      </a>
-                    ) : (
-                      <span className="text-gray-500">{h.subdomain}</span>
-                    )}
-                    {h.title && (
-                      <div className="text-xs text-gray-600 truncate max-w-xs mt-0.5">{h.title}</div>
-                    )}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    {h.is_live ? (
-                      <span className="text-emerald-400 font-medium">{h.status_code}</span>
-                    ) : (
-                      <span className="text-gray-700">down</span>
-                    )}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex flex-wrap gap-1">
-                      {(h.tech || []).map((t) => (
-                        <span
-                          key={t}
-                          className="bg-amz-bg border border-amz-border rounded px-1.5 py-0.5 text-xs text-gray-400"
+            {hosts.map(function (h) {
+              return (
+                <>
+                  <tr
+                    key={h.id}
+                    onClick={() => setOpen(open === h.id ? null : h.id)}
+                    className="border-t border-amz-border hover:bg-amz-panel2/60 cursor-pointer transition-colors"
+                  >
+                    <td className="px-5 py-3.5 font-medium">
+                      {h.is_live && h.scheme ? (
+                        
+                          href={buildUrl(h)}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-amz-accent2 hover:underline"
                         >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    {(h.exposed_paths || []).length === 0 ? (
-                      <span className="text-gray-700 text-xs">none</span>
-                    ) : (
+                          {h.subdomain}
+                        </a>
+                      ) : (
+                        <span className="text-gray-500">{h.subdomain}</span>
+                      )}
+                      {h.title && (
+                        <div className="text-xs text-gray-600 truncate max-w-xs mt-0.5">{h.title}</div>
+                      )}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {h.is_live ? (
+                        <span className="text-emerald-400 font-medium">{h.status_code}</span>
+                      ) : (
+                        <span className="text-gray-700">down</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3.5">
                       <div className="flex flex-wrap gap-1">
-                        {(h.exposed_paths || []).map((p) => (
+                        {(h.tech || []).map((t) => (
                           <span
-                            key={p.path}
-                            className="bg-amber-950/60 border border-amber-800/60 text-amber-300 rounded px-1.5 py-0.5 text-xs"
+                            key={t}
+                            className="bg-amz-bg border border-amz-border rounded px-1.5 py-0.5 text-xs text-gray-400"
                           >
-                            {p.label} ({p.status})
+                            {t}
                           </span>
                         ))}
                       </div>
-                    )}
-                  </td>
-                  <td className="px-5 py-3.5"><ScoreBadge score={h.ai_score} /></td>
-                </tr>
-                {open === h.id && (
-                  <tr className="bg-black/30">
-                    <td colSpan={5} className="px-5 py-4 text-xs text-gray-300 space-y-2.5">
-                      {h.ai_reason && (
-                        <div>
-                          <b className="text-gray-500">Why interesting:</b> {h.ai_reason}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {(h.exposed_paths || []).length === 0 ? (
+                        <span className="text-gray-700 text-xs">none</span>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {(h.exposed_paths || []).map((p) => (
+                            <span
+                              key={p.path}
+                              className="bg-amber-950/60 border border-amber-800/60 text-amber-300 rounded px-1.5 py-0.5 text-xs"
+                            >
+                              {p.label} ({p.status})
+                            </span>
+                          ))}
                         </div>
                       )}
-                      <div>
-                        <b className="text-gray-500">Response headers:</b>
-                        <pre className="mt-1.5 bg-black/40 border border-amz-border rounded-lg p-3 overflow-x-auto">
-                          {JSON.stringify(h.headers || {}, null, 2)}
-                        </pre>
-                      </div>
                     </td>
+                    <td className="px-5 py-3.5"><ScoreBadge score={h.ai_score} /></td>
                   </tr>
-                )}
-              </>
-            ))}
+                  {open === h.id && (
+                    <tr className="bg-black/30">
+                      <td colSpan={5} className="px-5 py-4 text-xs text-gray-300 space-y-2.5">
+                        {h.ai_reason && (
+                          <div>
+                            <b className="text-gray-500">Why interesting:</b> {h.ai_reason}
+                          </div>
+                        )}
+                        <div>
+                          <b className="text-gray-500">Response headers:</b>
+                          <pre className="mt-1.5 bg-black/40 border border-amz-border rounded-lg p-3 overflow-x-auto">
+                            {JSON.stringify(h.headers || {}, null, 2)}
+                          </pre>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              );
+            })}
           </tbody>
         </table>
       </div>
