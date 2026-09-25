@@ -40,7 +40,7 @@ export default function ScanDetail() {
 
   const rerun = async () => {
     const s = await api.rerunScan(scan.id);
-    window.location.href = `/scans/${s.id}`;
+    window.location.href = "/scans/" + s.id;
   };
 
   const hosts = scan.hosts || [];
@@ -69,13 +69,13 @@ export default function ScanDetail() {
             Re-run
           </button>
           <button
-            onClick={() => downloadExport(scan.id, "csv", `amz_scan_${scan.id}.csv`)}
+            onClick={() => downloadExport(scan.id, "csv", "amz_scan_" + scan.id + ".csv")}
             className="border border-amz-border rounded-lg px-3.5 py-2 text-sm hover:bg-amz-panel2 transition-colors"
           >
             CSV
           </button>
           <button
-            onClick={() => downloadExport(scan.id, "pdf", `amz_scan_${scan.id}.pdf`)}
+            onClick={() => downloadExport(scan.id, "pdf", "amz_scan_" + scan.id + ".pdf")}
             className="border border-amz-border rounded-lg px-3.5 py-2 text-sm hover:bg-amz-panel2 transition-colors"
           >
             PDF
@@ -132,7 +132,7 @@ export default function ScanDetail() {
                   <td className="px-5 py-3.5 font-medium">
                     {h.is_live && h.scheme ? (
                       
-                        href={`${h.scheme}://${h.subdomain}`}
+                        href={h.scheme + "://" + h.subdomain}
                         target="_blank"
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()}
